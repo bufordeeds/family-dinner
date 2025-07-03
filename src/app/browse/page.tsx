@@ -288,7 +288,7 @@ export default function BrowsePage() {
         {/* Error State */}
         {error && !loading && (
           <div className="text-center py-12">
-            <div className="text-red-400 text-6xl mb-4">⚠️</div>
+            <div className="text-red-400 text-6xl mb-4"></div>
             <h3 className="text-lg font-medium text-theme-primary mb-2">Oops! Something went wrong</h3>
             <p className="text-theme-subtle mb-4">{error}</p>
             <button
@@ -316,7 +316,7 @@ export default function BrowsePage() {
         {/* No Results */}
         {!loading && !error && filteredEvents.length === 0 && (
           <div className="text-center py-12">
-            <div className="text-gray-400 text-6xl mb-4">🍽️</div>
+            <div className="text-gray-400 text-6xl mb-4"></div>
             <h3 className="text-lg font-medium text-theme-primary mb-2">No dinners found</h3>
             <p className="text-theme-subtle mb-4">
               Try adjusting your search criteria or check back later for new events.

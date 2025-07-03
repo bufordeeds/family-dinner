@@ -19,8 +19,11 @@ export default function ChangelogPage() {
 				<div className='space-y-8'>
 					{/* Latest Updates */}
 					<section className='bg-theme-secondary rounded-lg p-6'>
-						<h2 className='text-2xl font-semibold text-theme-primary mb-4'>
-							🚀 Latest Updates
+						<h2 className='text-2xl font-semibold text-theme-primary mb-4 flex items-center gap-2'>
+							<svg className='w-6 h-6' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+								<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2m3 0H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2zM9 9l3 3 5-5' />
+							</svg>
+							Latest Updates
 						</h2>
 
 						<div className='max-h-96 overflow-y-auto space-y-6 pr-2'>
@@ -104,8 +107,11 @@ export default function ChangelogPage() {
 
 					{/* Community Contributions */}
 					<section className='bg-theme-secondary rounded-lg p-6'>
-						<h2 className='text-2xl font-semibold text-theme-primary mb-4'>
-							💡 Community Contributions
+						<h2 className='text-2xl font-semibold text-theme-primary mb-4 flex items-center gap-2'>
+							<svg className='w-6 h-6' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+								<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z' />
+							</svg>
+							Community Contributions
 						</h2>
 						<p className='text-theme-muted mb-4'>
 							We love hearing from our users! Here are some great
@@ -136,11 +142,13 @@ export default function ChangelogPage() {
 											theme colors that feel more home-y, warm, and cozy!&quot;
 										</p>
 										<div className='flex items-start gap-2'>
-											<span className='px-2 py-1 text-xs badge-success rounded-full flex-shrink-0'>
-												✓
+											<span className='px-2 py-1 text-xs badge-success rounded-full flex-shrink-0 flex items-center'>
+												<svg className='w-3 h-3' fill='currentColor' viewBox='0 0 20 20'>
+													<path fillRule='evenodd' d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z' clipRule='evenodd' />
+												</svg>
 											</span>
 											<span className='text-xs text-theme-subtle'>
-												<span className='font-medium text-theme-subtle'>Implemented</span> - What an amazing suggestion, Case! The warm palette transforms the entire experience! 🧡
+												<span className='font-medium text-theme-subtle'>Implemented</span> - What an amazing suggestion, Case! The warm palette transforms the entire experience!
 											</span>
 										</div>
 									</div>
@@ -172,11 +180,13 @@ export default function ChangelogPage() {
 											information again.&quot;
 										</p>
 										<div className='flex items-start gap-2'>
-											<span className='px-2 py-1 text-xs badge-success rounded-full flex-shrink-0'>
-												✓
+											<span className='px-2 py-1 text-xs badge-success rounded-full flex-shrink-0 flex items-center'>
+												<svg className='w-3 h-3' fill='currentColor' viewBox='0 0 20 20'>
+													<path fillRule='evenodd' d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z' clipRule='evenodd' />
+												</svg>
 											</span>
 											<span className='text-xs text-theme-subtle'>
-												<span className='font-medium text-theme-subtle'>Implemented</span> - Thanks for the great suggestion, Adam! 🎉
+												<span className='font-medium text-theme-subtle'>Implemented</span> - Thanks for the great suggestion, Adam!
 											</span>
 										</div>
 									</div>
@@ -187,8 +197,12 @@ export default function ChangelogPage() {
 
 					{/* Upcoming Features */}
 					<section className='bg-theme-secondary rounded-lg p-6'>
-						<h2 className='text-2xl font-semibold text-theme-primary mb-4'>
-							🔮 What&apos;s Coming Next
+						<h2 className='text-2xl font-semibold text-theme-primary mb-4 flex items-center gap-2'>
+							<svg className='w-6 h-6' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+								<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M15 12a3 3 0 11-6 0 3 3 0 016 0z' />
+								<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z' />
+							</svg>
+							What&apos;s Coming Next
 						</h2>
 						<div className='grid gap-4 md:grid-cols-2'>
 							<div className='bg-theme-card rounded-lg p-4 border border-theme-primary'>
@@ -231,8 +245,11 @@ export default function ChangelogPage() {
 
 					{/* Feedback Section */}
 					<section className='bg-theme-secondary rounded-lg p-6'>
-						<h2 className='text-2xl font-semibold text-theme-primary mb-4'>
-							📝 Share Your Ideas
+						<h2 className='text-2xl font-semibold text-theme-primary mb-4 flex items-center gap-2'>
+							<svg className='w-6 h-6' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+								<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z' />
+							</svg>
+							Share Your Ideas
 						</h2>
 						<p className='text-theme-muted mb-4'>
 							Have a suggestion or found a bug? We&apos;d love to
@@ -257,8 +274,11 @@ export default function ChangelogPage() {
 
 					{/* Support Section */}
 					<section className='bg-theme-secondary rounded-lg p-6'>
-						<h2 className='text-2xl font-semibold text-theme-primary mb-4'>
-							☕ Support the Project
+						<h2 className='text-2xl font-semibold text-theme-primary mb-4 flex items-center gap-2'>
+							<svg className='w-6 h-6' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+								<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z' />
+							</svg>
+							Support the Project
 						</h2>
 						<p className='text-theme-muted mb-4'>
 							Love using Family Dinner? If this app has helped you
@@ -273,7 +293,7 @@ export default function ChangelogPage() {
 								rel='noopener noreferrer'
 								className='inline-flex items-center justify-center px-4 py-2 btn-primary font-medium rounded-lg transition-colors'
 							>
-								☕ Buy me a coffee
+								Buy me a coffee
 							</a>
 							<span className='text-sm text-theme-muted'>
 								Every coffee helps fuel more delicious features!
