@@ -3,10 +3,10 @@ import { EventService } from '@/services/EventService'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const eventId = params.id
+    const { id: eventId } = await params
 
     if (!eventId) {
       return NextResponse.json(

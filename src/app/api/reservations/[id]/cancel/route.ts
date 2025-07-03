@@ -8,10 +8,10 @@ import { emailService } from '@/lib/email'
 // POST /api/reservations/[id]/cancel - Cancel reservation (authenticated user or guest with email verification)
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id: reservationId } = params
+    const { id: reservationId } = await params
     const body = await request.json()
     
     // Get authenticated user from Clerk (optional)

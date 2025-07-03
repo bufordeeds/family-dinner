@@ -5,10 +5,10 @@ import { prisma } from '@/lib/prisma'
 // GET /api/reservations/[id] - Get reservation details
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id: reservationId } = params
+    const { id: reservationId } = await params
     
     
     // Find the reservation with event details
