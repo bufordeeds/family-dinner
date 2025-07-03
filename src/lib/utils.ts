@@ -35,14 +35,19 @@ export function formatEventDate(date: Date | string): string {
     if (isNaN(dateObj.getTime())) {
       return 'Date TBD'
     }
-    return new Intl.DateTimeFormat('en-US', {
+    
+    // Force timezone in formatting to ensure consistency
+    const options: Intl.DateTimeFormatOptions = {
       weekday: 'long',
       month: 'long',
       day: 'numeric',
       hour: 'numeric',
       minute: '2-digit',
-      timeZone: APP_TIMEZONE
-    }).format(dateObj)
+      timeZone: APP_TIMEZONE,
+      hour12: true
+    }
+    
+    return new Intl.DateTimeFormat('en-US', options).format(dateObj)
   } catch (error) {
     console.error('Error formatting date:', error)
     return 'Date TBD'
