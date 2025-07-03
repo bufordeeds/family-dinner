@@ -72,7 +72,7 @@ export async function POST(
       if (body.guestEmail.toLowerCase() === reservation.guestEmail?.toLowerCase()) {
         isAuthorized = true
         userName = reservation.guestName || 'Guest'
-        userEmail = reservation.guestEmail
+        userEmail = reservation.guestEmail || ''
       }
     }
 
