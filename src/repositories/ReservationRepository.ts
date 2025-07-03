@@ -182,7 +182,11 @@ export class ReservationRepository {
             id: true,
             title: true,
             date: true,
-            chefName: true,
+            chef: {
+              select: {
+                name: true
+              }
+            },
             location: true
           }
         }
