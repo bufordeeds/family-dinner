@@ -349,14 +349,19 @@ export default function EditEventPage() {
                     <input
                       type="number"
                       id="estimatedCostPerPerson"
-                      min="5"
+                      min="0"
                       max="200"
-                      step="5"
+                      step="1"
                       value={formData.estimatedCostPerPerson}
                       onChange={(e) => setFormData(prev => ({ ...prev, estimatedCostPerPerson: parseInt(e.target.value) }))}
                       required
                       className="w-full px-3 py-3 border rounded-lg input-theme"
                     />
+                    {formData.estimatedCostPerPerson === 0 && (
+                      <p className='text-sm text-theme-muted mt-1'>
+                        💡 Free dinner! You can mention that tips are appreciated in your description.
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>

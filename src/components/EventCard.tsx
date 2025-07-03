@@ -156,13 +156,25 @@ export function EventCard({ event, onReserve, className }: EventCardProps) {
       <div className="px-6 py-4 bg-theme-secondary border-t border-theme-primary">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-lg font-bold text-theme-primary">
-                {formatCurrency(event.estimatedCostPerPerson)}
-              </span>
-              <span className="text-sm text-theme-muted">per person</span>
-            </div>
-            <p className="text-xs text-theme-subtle">Estimated cost</p>
+            {event.estimatedCostPerPerson === 0 ? (
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-lg font-bold text-green-600">FREE</span>
+                  <span className="text-sm text-theme-muted">dinner</span>
+                </div>
+                <p className="text-xs text-theme-subtle">Tips appreciated!</p>
+              </div>
+            ) : (
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-lg font-bold text-theme-primary">
+                    {formatCurrency(event.estimatedCostPerPerson)}
+                  </span>
+                  <span className="text-sm text-theme-muted">per person</span>
+                </div>
+                <p className="text-xs text-theme-subtle">Estimated cost</p>
+              </div>
+            )}
           </div>
 
           <div className="text-right">

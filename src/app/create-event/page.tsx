@@ -52,7 +52,7 @@ export default function CreateEventPage() {
 		time: '',
 		duration: 180, // 3 hours default
 		maxCapacity: 6,
-		estimatedCostPerPerson: 50,
+		estimatedCostPerPerson: 0,
 		cuisineTypes: [],
 		dietaryAccommodations: [],
 		location: {
@@ -479,9 +479,14 @@ export default function CreateEventPage() {
 										onChange={handleInputChange}
 										min='0'
 										max='200'
-										step='5'
+										step='1'
 										className='w-full px-3 py-3 border rounded-lg input-theme'
 									/>
+									{formData.estimatedCostPerPerson === 0 && (
+										<p className='text-sm text-theme-muted mt-1'>
+											💡 Free dinner! You can mention that tips are appreciated in your description.
+										</p>
+									)}
 								</div>
 							</div>
 						</div>

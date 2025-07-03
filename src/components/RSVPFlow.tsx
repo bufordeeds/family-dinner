@@ -350,11 +350,21 @@ export function RSVPFlow({ event, isOpen, onClose, onSuccess }: RSVPFlowProps) {
 
                 <div className="mt-6 p-4 bg-theme-accent-bg rounded-lg">
                   <div className="flex justify-between items-center">
-                    <span className="font-medium text-theme-primary">Total estimated cost:</span>
-                    <span className="text-xl font-bold text-theme-subtle">{formatCurrency(totalCost)}</span>
+                    <span className="font-medium text-theme-primary">
+                      {event.estimatedCostPerPerson === 0 ? 'This dinner is:' : 'Total estimated cost:'}
+                    </span>
+                    <span className={cn(
+                      "text-xl font-bold",
+                      event.estimatedCostPerPerson === 0 ? "text-green-600" : "text-theme-subtle"
+                    )}>
+                      {event.estimatedCostPerPerson === 0 ? 'FREE' : formatCurrency(totalCost)}
+                    </span>
                   </div>
                   <p className="text-sm text-theme-muted mt-1">
-                    Final amount may vary based on actual ingredient costs
+                    {event.estimatedCostPerPerson === 0 
+                      ? 'Tips are appreciated but not required!' 
+                      : 'Final amount may vary based on actual ingredient costs'
+                    }
                   </p>
                 </div>
               </div>
@@ -395,8 +405,14 @@ export function RSVPFlow({ event, isOpen, onClose, onSuccess }: RSVPFlowProps) {
                       <span className="text-theme-primary">{formData.attendeeName}</span>
                     </div>
                     <div className="flex justify-between font-medium pt-2 border-t border-theme-primary">
-                      <span className="text-theme-primary">Estimated total:</span>
-                      <span className="text-theme-subtle">{formatCurrency(totalCost)}</span>
+                      <span className="text-theme-primary">
+                        {event.estimatedCostPerPerson === 0 ? 'Cost:' : 'Estimated total:'}
+                      </span>
+                      <span className={cn(
+                        event.estimatedCostPerPerson === 0 ? "text-green-600" : "text-theme-subtle"
+                      )}>
+                        {event.estimatedCostPerPerson === 0 ? 'FREE' : formatCurrency(totalCost)}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -411,13 +427,20 @@ export function RSVPFlow({ event, isOpen, onClose, onSuccess }: RSVPFlowProps) {
                       className="mt-1 w-4 h-4 checkbox-theme rounded"
                     />
                     <span className="text-sm text-theme-primary">
-                      I understand that the final cost may vary based on actual ingredient prices and agree to pay my fair share via Venmo after the dinner.
+                      {event.estimatedCostPerPerson === 0 
+                        ? 'I understand this is a free dinner and that tips are appreciated but not required.'
+                        : 'I understand that the final cost may vary based on actual ingredient prices and agree to pay my fair share via Venmo after the dinner.'
+                      }
                     </span>
                   </label>
 
                   <div className="text-xs text-theme-muted space-y-1">
                     <p>• Cancellations must be made at least 24 hours in advance</p>
-                    <p>• Payment will be requested after the dinner based on actual costs</p>
+                    {event.estimatedCostPerPerson === 0 ? (
+                      <p>• Tips can be sent via Venmo to show appreciation for the host</p>
+                    ) : (
+                      <p>• Payment will be requested after the dinner based on actual costs</p>
+                    )}
                     <p>• By reserving, you agree to our terms of service</p>
                   </div>
                 </div>
