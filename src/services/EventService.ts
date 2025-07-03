@@ -55,11 +55,11 @@ export class EventService {
         .reduce((sum, res) => sum + res.guestCount, 0),
       reservations: event.reservations.map(res => ({
         ...res,
-        user: {
+        user: res.user ? {
           ...res.user,
           // Hide sensitive info for privacy
           email: res.user.id // Only show email to chef
-        }
+        } : null
       }))
     }
   }
