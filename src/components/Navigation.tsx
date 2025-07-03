@@ -89,7 +89,7 @@ export function Navigation() {
                 </Link>
                 <Link
                   href="/auth/signup"
-                  className="text-sm font-medium px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  className="text-sm font-medium px-4 py-2 btn-primary rounded-lg transition-colors"
                 >
                   Sign Up
                 </Link>
@@ -172,7 +172,7 @@ export function Navigation() {
                   </Link>
                   <Link
                     href="/auth/signup"
-                    className="block px-3 py-2 mx-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-center"
+                    className="block px-3 py-2 mx-3 btn-primary rounded-lg transition-colors text-center"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Sign Up
