@@ -152,6 +152,9 @@ export default function EditEventPage() {
     setError(null)
 
     try {
+      // Import the conversion function
+      const { convertCentralTimeToUTC } = await import('@/lib/utils')
+      
       const response = await fetch(`/api/events/${eventId}`, {
         method: 'PATCH',
         headers: {
@@ -159,6 +162,7 @@ export default function EditEventPage() {
         },
         body: JSON.stringify({
           ...formData,
+          date: convertCentralTimeToUTC(formData.date, formData.time),
           chefId: user?.id,
           chefName: user?.name,
           chefEmail: user?.email
