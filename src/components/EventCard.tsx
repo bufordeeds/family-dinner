@@ -146,7 +146,7 @@ export function EventCard({ event, onReserve, className }: EventCardProps) {
 
         {/* Description */}
         {event.description && (
-          <p className="text-theme-subtle text-sm mt-3 line-clamp-2">
+          <p className="text-theme-subtle text-sm mt-3">
             {event.description}
           </p>
         )}
