@@ -78,7 +78,14 @@ export async function POST(request: NextRequest) {
       requiredFields = [...requiredFields, 'date']
     }
     
-    const missingFields = requiredFields.filter(field => !body[field])
+    const missingFields = requiredFields.filter(field => {
+      const value = body[field]
+      // Allow 0 for estimatedCostPerPerson (free events)
+      if (field === 'estimatedCostPerPerson') {
+        return value === undefined || value === null || value === ''
+      }
+      return !value
+    })
     
     if (missingFields.length > 0) {
       return NextResponse.json(
