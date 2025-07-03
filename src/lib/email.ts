@@ -69,7 +69,8 @@ export class EmailService {
     eventTitle: string,
     eventDate: Date,
     eventLocation: string,
-    guestCount: number
+    guestCount: number,
+    reservationId?: string
   ): Promise<boolean> {
     const subject = `Reservation Confirmed: ${eventTitle}`;
     const html = this.generateReservationConfirmationEmail(
@@ -77,7 +78,8 @@ export class EmailService {
       eventTitle,
       eventDate,
       eventLocation,
-      guestCount
+      guestCount,
+      reservationId
     );
     
     return this.sendEmail({
@@ -179,6 +181,54 @@ export class EmailService {
     });
   }
 
+  async sendReservationCancellation(
+    userEmail: string,
+    userName: string,
+    eventTitle: string,
+    eventDate: Date,
+    guestCount: number,
+    promotedFromWaitlist: number
+  ): Promise<boolean> {
+    const subject = `Reservation Cancelled: ${eventTitle}`;
+    const html = this.generateReservationCancellationEmail(
+      userName,
+      eventTitle,
+      eventDate,
+      guestCount,
+      promotedFromWaitlist
+    );
+    
+    return this.sendEmail({
+      to: userEmail,
+      subject,
+      html,
+    });
+  }
+
+  async sendChefCancellationNotification(
+    chefEmail: string,
+    chefName: string,
+    eventTitle: string,
+    guestName: string,
+    guestCount: number,
+    eventDate: Date
+  ): Promise<boolean> {
+    const subject = `Guest Cancellation: ${eventTitle}`;
+    const html = this.generateChefCancellationNotificationEmail(
+      chefName,
+      eventTitle,
+      guestName,
+      guestCount,
+      eventDate
+    );
+    
+    return this.sendEmail({
+      to: chefEmail,
+      subject,
+      html,
+    });
+  }
+
   // Email template generators
   private generateWelcomeEmail(userName: string, userRole: 'CHEF' | 'ATTENDEE'): string {
     const roleSpecificContent = userRole === 'CHEF' 
@@ -248,7 +298,8 @@ export class EmailService {
     eventTitle: string,
     eventDate: Date,
     eventLocation: string,
-    guestCount: number
+    guestCount: number,
+    reservationId?: string
   ): string {
     const formattedDate = eventDate.toLocaleDateString('en-US', {
       weekday: 'long',
@@ -296,7 +347,145 @@ export class EmailService {
           <p>We can't wait for you to enjoy this amazing dinner experience!</p>
           
           <div style="text-align: center; margin: 32px 0;">
-            <a href="${process.env.NEXT_PUBLIC_APP_URL}/reservations" style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; display: inline-block;">View My Reservations</a>
+            <a href="${process.env.NEXT_PUBLIC_APP_URL}/reservations" style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; display: inline-block; margin-right: 8px;">View My Reservations</a>
+          </div>
+          
+          ${reservationId ? `
+          <div style="background-color: #fef2f2; padding: 16px; border-radius: 8px; margin: 24px 0; text-align: center;">
+            <p style="margin: 0 0 12px 0; font-size: 14px; color: #666;">Need to cancel? You can cancel up to 24 hours before the event.</p>
+            <a href="${process.env.NEXT_PUBLIC_APP_URL}/cancel/${reservationId}" style="color: #dc2626; text-decoration: underline; font-size: 14px;">Cancel this reservation</a>
+          </div>
+          ` : ''}
+          
+          <div style="border-top: 1px solid #e5e7eb; padding-top: 20px; margin-top: 32px; text-align: center; color: #666; font-size: 14px;">
+            <p>The Family Dinner Team</p>
+            <p>
+              <a href="${process.env.NEXT_PUBLIC_APP_URL}" style="color: #2563eb;">familydinner.me</a>
+            </p>
+          </div>
+        </body>
+      </html>
+    `;
+  }
+
+  private generateReservationCancellationEmail(
+    userName: string,
+    eventTitle: string,
+    eventDate: Date,
+    guestCount: number,
+    promotedFromWaitlist: number
+  ): string {
+    const formattedDate = eventDate.toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+    const formattedTime = eventDate.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    });
+
+    return `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Reservation Cancelled</title>
+        </head>
+        <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <div style="text-align: center; margin-bottom: 32px;">
+            <h1 style="color: #2563eb; margin-bottom: 8px;">🍽️ Family Dinner</h1>
+          </div>
+          
+          <div style="background-color: #ef4444; color: white; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 24px;">
+            <h2 style="margin: 0;">Reservation Cancelled</h2>
+          </div>
+          
+          <p>Hi ${userName},</p>
+          <p>Your reservation for <strong>${eventTitle}</strong> on ${formattedDate} at ${formattedTime} has been successfully cancelled.</p>
+          
+          <div style="background-color: #f8fafc; padding: 20px; border-radius: 8px; margin: 24px 0;">
+            <h3 style="margin-top: 0; color: #2563eb;">Cancelled Reservation Details</h3>
+            <p><strong>📅 Date:</strong> ${formattedDate}</p>
+            <p><strong>🕒 Time:</strong> ${formattedTime}</p>
+            <p><strong>👥 Guests:</strong> ${guestCount} ${guestCount === 1 ? 'person' : 'people'}</p>
+          </div>
+          
+          ${promotedFromWaitlist > 0 ? `
+          <div style="background-color: #d1fae5; padding: 16px; border-radius: 8px; margin: 24px 0;">
+            <p style="margin: 0;"><strong>Good news!</strong> Your cancellation has allowed ${promotedFromWaitlist} ${promotedFromWaitlist === 1 ? 'person' : 'people'} to be promoted from the waitlist.</p>
+          </div>
+          ` : ''}
+          
+          <p>We're sorry you can't make it to this dinner, but we understand that plans can change.</p>
+          
+          <div style="background-color: #f0f9ff; padding: 20px; border-radius: 8px; margin: 24px 0;">
+            <h4 style="margin-top: 0; color: #2563eb;">Don't miss out on future dinners!</h4>
+            <p style="margin-bottom: 0;">There are many other amazing dining experiences waiting for you. Browse our latest events and find your next culinary adventure!</p>
+          </div>
+          
+          <div style="text-align: center; margin: 32px 0;">
+            <a href="${process.env.NEXT_PUBLIC_APP_URL}/browse" style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; display: inline-block;">Browse Other Dinners</a>
+          </div>
+          
+          <div style="border-top: 1px solid #e5e7eb; padding-top: 20px; margin-top: 32px; text-align: center; color: #666; font-size: 14px;">
+            <p>The Family Dinner Team</p>
+            <p>
+              <a href="${process.env.NEXT_PUBLIC_APP_URL}" style="color: #2563eb;">familydinner.me</a>
+            </p>
+          </div>
+        </body>
+      </html>
+    `;
+  }
+
+  private generateChefCancellationNotificationEmail(
+    chefName: string,
+    eventTitle: string,
+    guestName: string,
+    guestCount: number,
+    eventDate: Date
+  ): string {
+    const formattedDate = eventDate.toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+
+    return `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Guest Cancellation Notification</title>
+        </head>
+        <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <div style="text-align: center; margin-bottom: 32px;">
+            <h1 style="color: #2563eb; margin-bottom: 8px;">🍽️ Family Dinner</h1>
+          </div>
+          
+          <h2>Guest Cancellation: ${eventTitle}</h2>
+          
+          <p>Hi ${chefName},</p>
+          <p>We wanted to let you know that <strong>${guestName}</strong> has cancelled their reservation for your dinner on ${formattedDate}.</p>
+          
+          <div style="background-color: #f8fafc; padding: 20px; border-radius: 8px; margin: 24px 0;">
+            <h3 style="margin-top: 0; color: #2563eb;">Cancellation Details</h3>
+            <p><strong>Guest:</strong> ${guestName}</p>
+            <p><strong>Party Size:</strong> ${guestCount} ${guestCount === 1 ? 'person' : 'people'}</p>
+            <p><strong>Event:</strong> ${eventTitle}</p>
+            <p><strong>Date:</strong> ${formattedDate}</p>
+          </div>
+          
+          <div style="background-color: #dbeafe; padding: 16px; border-radius: 8px; margin: 24px 0;">
+            <p style="margin: 0;"><strong>What happens next:</strong> We've automatically promoted anyone from the waitlist if available. You can check your event dashboard for the updated guest list.</p>
+          </div>
+          
+          <div style="text-align: center; margin: 32px 0;">
+            <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard" style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; display: inline-block;">View Event Dashboard</a>
           </div>
           
           <div style="border-top: 1px solid #e5e7eb; padding-top: 20px; margin-top: 32px; text-align: center; color: #666; font-size: 14px;">

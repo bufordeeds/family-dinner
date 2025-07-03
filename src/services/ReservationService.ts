@@ -97,6 +97,49 @@ export class ReservationService {
     }
   }
 
+  // Cancel guest reservation (no user ID)
+  static async cancelGuestReservation(reservationId: string) {
+    // Get reservation details
+    const reservation = await prisma.reservation.findUnique({
+      where: { id: reservationId },
+      include: { event: true }
+    })
+
+    if (!reservation) {
+      throw new Error('Reservation not found')
+    }
+
+    // Verify this is a guest reservation
+    if (reservation.userId !== null) {
+      throw new Error('This is not a guest reservation')
+    }
+
+    // Check cancellation deadline
+    const hoursUntilEvent = Math.abs(reservation.event.date.getTime() - new Date().getTime()) / 36e5
+    if (hoursUntilEvent < 24) {
+      throw new Error('Cannot cancel within 24 hours of the event')
+    }
+
+    // Cancel the reservation
+    await ReservationRepository.cancel(reservationId)
+
+    // Promote waitlist if spots opened up
+    const spotsFreed = reservation.guestCount
+    const promoted = await ReservationRepository.promoteFromWaitlist(
+      reservation.eventId, 
+      spotsFreed
+    )
+
+    // Update event status
+    await EventService.updateEventStatus(reservation.eventId)
+
+    return {
+      cancelled: true,
+      promotedFromWaitlist: promoted.length,
+      message: `Reservation cancelled. ${promoted.length} people promoted from waitlist.`
+    }
+  }
+
   // Get user's reservations
   static async getUserReservations(userId: string) {
     const reservations = await ReservationRepository.findByUserId(userId)

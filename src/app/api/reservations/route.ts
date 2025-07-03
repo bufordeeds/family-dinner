@@ -130,7 +130,8 @@ export async function POST(request: NextRequest) {
               event.title,
               new Date(event.date),
               location,
-              Number(body.guestCount)
+              Number(body.guestCount),
+              reservation.id
             )
           }
         }

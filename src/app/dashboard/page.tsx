@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { EventShareButton } from '@/components/EventShareButton'
 import { Navigation } from '@/components/Navigation'
+import { useToast } from '@/components/Toast'
 
 interface Event {
   id: string
@@ -28,11 +29,16 @@ interface Event {
 
 interface EventWithRole extends Event {
   userRole: 'host' | 'attendee'
+  reservationId?: string
+  reservationStatus?: 'CONFIRMED' | 'WAITLIST' | 'CANCELLED'
+  guestCount?: number
+  canCancel?: boolean
 }
 
 export default function DashboardPage() {
   const { user, isLoading } = useAuth()
   const router = useRouter()
+  const { showToast } = useToast()
   const [events, setEvents] = useState<EventWithRole[]>([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'hosting' | 'attending'>('hosting')
@@ -40,6 +46,8 @@ export default function DashboardPage() {
   const [cancelLoading, setCancelLoading] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState<string | null>(null)
   const [deleteLoading, setDeleteLoading] = useState(false)
+  const [showCancelReservationModal, setShowCancelReservationModal] = useState<string | null>(null)
+  const [cancelReservationLoading, setCancelReservationLoading] = useState(false)
 
   const formatDate = (date: string | null | undefined) => {
     if (!date) return 'Date TBD'
@@ -160,6 +168,35 @@ export default function DashboardPage() {
 
   const handleViewReceipt = (eventId: string) => {
     router.push(`/events/${eventId}/receipt`)
+  }
+
+  const handleCancelReservation = async (reservationId: string) => {
+    setCancelReservationLoading(true)
+    try {
+      const response = await fetch(`/api/reservations/${reservationId}/cancel`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({})
+      })
+
+      const result = await response.json()
+
+      if (response.ok && result.success) {
+        showToast(result.message || 'Reservation cancelled successfully', 'success', 6000)
+        // Refresh the events list
+        await loadUserEvents()
+        setShowCancelReservationModal(null)
+      } else {
+        throw new Error(result.message || 'Failed to cancel reservation')
+      }
+    } catch (error) {
+      console.error('Error cancelling reservation:', error)
+      showToast(error instanceof Error ? error.message : 'Failed to cancel reservation', 'error')
+    } finally {
+      setCancelReservationLoading(false)
+    }
   }
 
   useEffect(() => {
@@ -506,9 +543,22 @@ export default function DashboardPage() {
                             <h3 className="text-lg font-semibold text-theme-primary">
                               {event.title}
                             </h3>
-                            <span className="text-xs badge-info px-2 py-1 rounded-full">
-                              Guest
-                            </span>
+                            <div className="flex items-center gap-2">
+                              <span className={`text-xs px-2 py-1 rounded-full ${
+                                event.reservationStatus === 'CONFIRMED' ? 'badge-success' :
+                                event.reservationStatus === 'WAITLIST' ? 'badge-warning' :
+                                'badge-error'
+                              }`}>
+                                {event.reservationStatus === 'CONFIRMED' ? 'Confirmed' :
+                                 event.reservationStatus === 'WAITLIST' ? 'Waitlist' :
+                                 'Cancelled'}
+                              </span>
+                              {event.guestCount && event.guestCount > 1 && (
+                                <span className="text-xs badge-info px-2 py-1 rounded-full">
+                                  +{event.guestCount - 1} guest{event.guestCount > 2 ? 's' : ''}
+                                </span>
+                              )}
+                            </div>
                           </div>
                           <p className="text-theme-muted text-sm mb-2">
                             Hosted by {event.chefName}
@@ -531,12 +581,22 @@ export default function DashboardPage() {
                             </div>
                           </div>
                           <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                            <Link
-                              href={`/events/${event.id}`}
-                              className="text-theme-subtle hover:text-theme-primary text-sm font-medium"
-                            >
-                              View Details →
-                            </Link>
+                            <div className="flex items-center justify-between">
+                              <Link
+                                href={`/events/${event.id}`}
+                                className="text-theme-subtle hover:text-theme-primary text-sm font-medium"
+                              >
+                                View Details →
+                              </Link>
+                              {event.canCancel && event.reservationStatus !== 'CANCELLED' && event.reservationId && (
+                                <button
+                                  onClick={() => setShowCancelReservationModal(event.reservationId!)}
+                                  className="px-3 py-1 text-xs text-red-600 hover:text-red-700 border border-red-600 hover:border-red-700 rounded transition-colors"
+                                >
+                                  Cancel
+                                </button>
+                              )}
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -610,6 +670,42 @@ export default function DashboardPage() {
                 className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
               >
                 {deleteLoading ? 'Deleting...' : 'Delete Event'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Cancel Reservation Modal */}
+      {showCancelReservationModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-theme-card rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 className="text-lg font-semibold text-theme-primary mb-4">
+              Cancel Reservation
+            </h3>
+            <p className="text-theme-muted mb-6">
+              Are you sure you want to cancel your reservation for this dinner? This action cannot be undone. 
+              The chef will be notified of your cancellation.
+            </p>
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-6">
+              <p className="text-sm text-yellow-600">
+                ⚠️ Reservations can only be cancelled up to 24 hours before the event.
+              </p>
+            </div>
+            <div className="flex space-x-4 justify-end">
+              <button
+                onClick={() => setShowCancelReservationModal(null)}
+                disabled={cancelReservationLoading}
+                className="btn-cancel px-4 py-2 rounded-lg transition-colors"
+              >
+                Keep Reservation
+              </button>
+              <button
+                onClick={() => handleCancelReservation(showCancelReservationModal)}
+                disabled={cancelReservationLoading}
+                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
+              >
+                {cancelReservationLoading ? 'Cancelling...' : 'Cancel Reservation'}
               </button>
             </div>
           </div>
