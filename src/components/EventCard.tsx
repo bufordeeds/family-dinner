@@ -40,7 +40,8 @@ export function EventCard({ event, onReserve, className }: EventCardProps) {
         month: 'long',
         day: 'numeric',
         hour: 'numeric',
-        minute: '2-digit'
+        minute: '2-digit',
+        timeZone: 'America/Chicago' // San Antonio timezone
       }).format(dateObj)
     } catch (error) {
       console.error('Error formatting date:', error)

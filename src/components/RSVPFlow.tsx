@@ -392,7 +392,8 @@ export function RSVPFlow({ event, isOpen, onClose, onSuccess }: RSVPFlowProps) {
                           month: 'long',
                           day: 'numeric',
                           hour: 'numeric',
-                          minute: '2-digit'
+                          minute: '2-digit',
+                          timeZone: 'America/Chicago' // San Antonio timezone
                         }).format(new Date(event.date))}
                       </span>
                     </div>

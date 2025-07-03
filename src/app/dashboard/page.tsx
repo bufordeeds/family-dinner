@@ -63,7 +63,8 @@ export default function DashboardPage() {
         month: 'long',
         day: 'numeric',
         hour: 'numeric',
-        minute: '2-digit'
+        minute: '2-digit',
+        timeZone: 'America/Chicago' // San Antonio timezone
       }).format(dateObj)
     } catch {
       return 'Date TBD'
@@ -409,7 +410,7 @@ export default function DashboardPage() {
                                 <p>👥 {event.currentReservations || 0}/{event.maxCapacity || 0} guests</p>
                                 <p>📍 {formatLocation(event.location)}</p>
                                 <p>
-                                  💰 {formatCurrency(event.estimatedCostPerPerson || 0)} per person
+                                  💰 {event.estimatedCostPerPerson === 0 ? 'FREE dinner' : `${formatCurrency(event.estimatedCostPerPerson || 0)} per person`}
                                   {event.actualCostPerPerson && (
                                     <span className="text-green-600 dark:text-green-400 ml-2">
                                       (actual: {formatCurrency(event.actualCostPerPerson)})
@@ -577,7 +578,10 @@ export default function DashboardPage() {
                             </div>
                             <div className="flex items-center">
                               <span className="w-4 h-4 mr-2">💰</span>
-                              {formatCurrency(event.actualCostPerPerson || event.estimatedCostPerPerson)} per person
+                              {(event.actualCostPerPerson || event.estimatedCostPerPerson) === 0 
+                                ? 'FREE dinner' 
+                                : `${formatCurrency(event.actualCostPerPerson || event.estimatedCostPerPerson)} per person`
+                              }
                             </div>
                           </div>
                           <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
