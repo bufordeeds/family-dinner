@@ -107,7 +107,7 @@ export async function POST(request: NextRequest) {
             : 'Location TBD'
           
           let userEmail: string | undefined
-          let userName: string
+          let userName: string = ''
           
           if (isGuestReservation) {
             // Use guest information
