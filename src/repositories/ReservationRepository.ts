@@ -166,4 +166,27 @@ export class ReservationRepository {
 
     return waitlistReservations
   }
+
+  // Find reservation by guest token (for guest management)
+  static async findByGuestToken(hashedToken: string) {
+    return await prisma.reservation.findFirst({
+      where: { 
+        guestToken: hashedToken,
+        tokenExpiresAt: {
+          gt: new Date() // Token not expired
+        }
+      },
+      include: {
+        event: {
+          select: {
+            id: true,
+            title: true,
+            date: true,
+            chefName: true,
+            location: true
+          }
+        }
+      }
+    })
+  }
 }
