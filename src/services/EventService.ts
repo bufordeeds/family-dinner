@@ -54,9 +54,21 @@ export class EventService {
         .filter(r => r.status === 'CONFIRMED')
         .reduce((sum, res) => sum + res.guestCount, 0),
       reservations: event.reservations.map(res => ({
-        ...res,
+        id: res.id,
+        userId: res.userId,
+        guestCount: res.guestCount,
+        dietaryRestrictions: res.dietaryRestrictions,
+        specialRequests: res.specialRequests,
+        status: res.status,
+        createdAt: res.createdAt,
+        guestName: res.guestName,
+        guestEmail: res.guestEmail,
+        phoneNumber: res.phoneNumber,
+        // Exclude sensitive fields like guestToken
         user: res.user ? {
-          ...res.user,
+          id: res.user.id,
+          name: res.user.name,
+          profile: res.user.profile,
           // Hide sensitive info for privacy
           email: res.user.id // Only show email to chef
         } : null

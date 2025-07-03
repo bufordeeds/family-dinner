@@ -128,7 +128,18 @@ export class EventRepository {
         },
         reservations: {
           where: { status: { in: ['CONFIRMED', 'WAITLIST'] } },
-          include: {
+          select: {
+            id: true,
+            userId: true,
+            guestCount: true,
+            dietaryRestrictions: true,
+            specialRequests: true,
+            status: true,
+            createdAt: true,
+            guestName: true,
+            guestEmail: true,
+            phoneNumber: true,
+            // Exclude guestToken and tokenExpiresAt for compatibility
             user: {
               select: {
                 id: true,
