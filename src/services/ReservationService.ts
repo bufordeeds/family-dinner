@@ -2,8 +2,37 @@
 import { ReservationRepository, CreateReservationData } from '@/repositories/ReservationRepository'
 import { EventRepository } from '@/repositories/EventRepository'
 import { EventService } from './EventService'
+import { createHash, randomBytes } from 'crypto'
 
 export class ReservationService {
+  // Generate secure token for guest reservations
+  private static generateGuestToken(): string {
+    return randomBytes(32).toString('hex')
+  }
+
+  // Hash token for storage (never store plain text tokens)
+  private static hashToken(token: string): string {
+    return createHash('sha256').update(token).digest('hex')
+  }
+
+  // Validate guest token and return reservation
+  static async validateGuestToken(token: string) {
+    const hashedToken = this.hashToken(token)
+    
+    const reservation = await ReservationRepository.findByGuestToken(hashedToken)
+    
+    if (!reservation) {
+      throw new Error('Invalid or expired token')
+    }
+
+    // Check if token has expired
+    if (reservation.tokenExpiresAt && new Date() > reservation.tokenExpiresAt) {
+      throw new Error('Token has expired')
+    }
+
+    return reservation
+  }
+
   // Create new reservation with business logic
   static async createReservation(data: CreateReservationData) {
     // Business validation - skip duplicate check for guest reservations
@@ -43,14 +72,35 @@ export class ReservationService {
       }
     }
 
-    // Create confirmed reservation
-    const reservation = await ReservationRepository.create(data)
+    // Generate token for guest reservations (not for logged-in users)
+    let guestToken: string | undefined
+    let hashedToken: string | undefined
+    let tokenExpiresAt: Date | undefined
+
+    if (!data.userId && (data.guestName || data.guestEmail)) {
+      guestToken = this.generateGuestToken()
+      hashedToken = this.hashToken(guestToken)
+      // Token expires 24 hours after event completion
+      const event = await EventRepository.findById(data.eventId)
+      if (event) {
+        tokenExpiresAt = new Date(event.date)
+        tokenExpiresAt.setHours(tokenExpiresAt.getHours() + 24)
+      }
+    }
+
+    // Create confirmed reservation with token data
+    const reservation = await ReservationRepository.create({
+      ...data,
+      guestToken: hashedToken,
+      tokenExpiresAt
+    })
 
     // Update event status (might change from OPEN to FULL)
     await EventService.updateEventStatus(data.eventId)
 
     return {
       ...reservation,
+      guestToken: guestToken, // Return plain token to client (only once)
       message: 'Reservation confirmed!'
     }
   }

@@ -31,7 +31,8 @@ export async function GET(request: NextRequest) {
       date: reservation.event.date.toISOString(),
       time: reservation.event.date.toLocaleTimeString('en-US', { 
         hour: 'numeric', 
-        minute: '2-digit' 
+        minute: '2-digit',
+        timeZone: 'America/Chicago' // San Antonio timezone
       }),
       location: reservation.event.location?.neighborhood && reservation.event.location?.city 
         ? `${reservation.event.location.neighborhood}, ${reservation.event.location.city}`

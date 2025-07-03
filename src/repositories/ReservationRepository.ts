@@ -12,6 +12,9 @@ export interface CreateReservationData {
   guestName?: string
   guestEmail?: string
   phoneNumber?: string
+  // Token fields for guest management
+  guestToken?: string
+  tokenExpiresAt?: Date
 }
 
 export class ReservationRepository {
@@ -28,7 +31,10 @@ export class ReservationRepository {
         // Guest-specific fields
         guestName: data.guestName,
         guestEmail: data.guestEmail,
-        phoneNumber: data.phoneNumber
+        phoneNumber: data.phoneNumber,
+        // Token fields for guest management
+        guestToken: data.guestToken,
+        tokenExpiresAt: data.tokenExpiresAt
       },
       include: {
         event: {

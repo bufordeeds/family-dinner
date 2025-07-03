@@ -1,4 +1,5 @@
 import { Resend } from 'resend';
+import { APP_TIMEZONE } from './utils';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -306,11 +307,13 @@ export class EmailService {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
+      timeZone: APP_TIMEZONE
     });
     const formattedTime = eventDate.toLocaleTimeString('en-US', {
       hour: 'numeric',
       minute: '2-digit',
       hour12: true,
+      timeZone: APP_TIMEZONE
     });
 
     return `
@@ -380,11 +383,13 @@ export class EmailService {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
+      timeZone: APP_TIMEZONE
     });
     const formattedTime = eventDate.toLocaleTimeString('en-US', {
       hour: 'numeric',
       minute: '2-digit',
       hour12: true,
+      timeZone: APP_TIMEZONE
     });
 
     return `
@@ -453,6 +458,7 @@ export class EmailService {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
+      timeZone: APP_TIMEZONE
     });
 
     return `
@@ -510,6 +516,7 @@ export class EmailService {
       hour: 'numeric',
       minute: '2-digit',
       hour12: true,
+      timeZone: APP_TIMEZONE
     });
 
     return `
@@ -625,6 +632,7 @@ export class EmailService {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
+      timeZone: APP_TIMEZONE
     });
 
     return `
@@ -676,6 +684,7 @@ export class EmailService {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
+      timeZone: APP_TIMEZONE
     });
 
     return `

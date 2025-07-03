@@ -183,11 +183,13 @@ export default function CancelReservationPage() {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
+    timeZone: 'America/Chicago' // San Antonio timezone
   })
   const formattedTime = eventDate.toLocaleTimeString('en-US', {
     hour: 'numeric',
     minute: '2-digit',
     hour12: true,
+    timeZone: 'America/Chicago' // San Antonio timezone
   })
 
   const hoursUntilEvent = Math.abs(eventDate.getTime() - new Date().getTime()) / 36e5

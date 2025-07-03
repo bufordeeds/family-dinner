@@ -1,7 +1,7 @@
 'use client'
 
 import { PublicDinnerEvent } from '@/types'
-import { cn, formatCurrency } from '@/lib/utils'
+import { cn, formatCurrency, formatEventDate } from '@/lib/utils'
 
 interface EventCardProps {
   event: PublicDinnerEvent
@@ -29,25 +29,7 @@ export function EventCard({ event, onReserve, className }: EventCardProps) {
   const isRSVPConfirmed = event.userRsvpStatus?.status === 'CONFIRMED'
   const isRSVPWaitlisted = event.userRsvpStatus?.status === 'WAITLIST'
   
-  const formatDate = (date: Date | string) => {
-    try {
-      const dateObj = typeof date === 'string' ? new Date(date) : date
-      if (isNaN(dateObj.getTime())) {
-        return 'Date TBD'
-      }
-      return new Intl.DateTimeFormat('en-US', {
-        weekday: 'long',
-        month: 'long',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit',
-        timeZone: 'America/Chicago' // San Antonio timezone
-      }).format(dateObj)
-    } catch (error) {
-      console.error('Error formatting date:', error)
-      return 'Date TBD'
-    }
-  }
+  // Use centralized date formatting utility
 
   const formatDuration = (minutes: number) => {
     console.log('⏱️ [EVENT CARD] formatDuration called with:', {
@@ -121,7 +103,7 @@ export function EventCard({ event, onReserve, className }: EventCardProps) {
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
-            <span>{formatDate(event.date)}</span>
+            <span>{formatEventDate(event.date)}</span>
           </div>
           <div className="flex items-center gap-2">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

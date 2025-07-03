@@ -118,6 +118,8 @@ model Reservation {
   guestName           String?
   guestEmail          String?
   phoneNumber         String?
+  guestToken          String?
+  tokenExpiresAt      DateTime?
   amountOwed          Float?
   amountPaid          Float             @default(0)
   paidAt              DateTime?

@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { AvailabilityPollData, AvailabilityResponse } from '@/types'
 import { groupDatesByDay } from '@/utils/dateGrouping'
+import { formatShortDate, APP_TIMEZONE } from '@/lib/utils'
 
 interface PollResultsViewProps {
   pollData: AvailabilityPollData
@@ -29,7 +30,8 @@ export function PollResultsView({
         month: 'long',
         day: 'numeric',
         hour: 'numeric',
-        minute: '2-digit'
+        minute: '2-digit',
+        timeZone: APP_TIMEZONE
       }).format(dateTime)
     } catch {
       return `${date} at ${time}`
@@ -162,12 +164,7 @@ export function PollResultsView({
           
           {pollData.pollDeadline && (
             <span className="text-sm text-gray-600 dark:text-gray-400">
-              Deadline: {new Intl.DateTimeFormat('en-US', {
-                month: 'short',
-                day: 'numeric',
-                hour: 'numeric',
-                minute: '2-digit'
-              }).format(new Date(pollData.pollDeadline))}
+              Deadline: {formatShortDate(pollData.pollDeadline)}
               {isDeadlinePassed && <span className="text-red-600 dark:text-red-400 ml-1">(Passed)</span>}
             </span>
           )}

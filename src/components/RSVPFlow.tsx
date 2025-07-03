@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import { PublicDinnerEvent } from '@/types'
-import { cn, formatCurrency } from '@/lib/utils'
+import { cn, formatCurrency, formatEventDate } from '@/lib/utils'
 import { useAuth } from '@/contexts/ClerkAuthContext'
 import { useToast } from '@/components/Toast'
 
@@ -23,6 +23,9 @@ interface ReservationFormData {
   reservationId?: string
   status?: string
   message?: string
+  // New fields for progressive account creation
+  createAccount?: boolean
+  password?: string
 }
 
 export function RSVPFlow({ event, isOpen, onClose, onSuccess }: RSVPFlowProps) {
@@ -35,7 +38,9 @@ export function RSVPFlow({ event, isOpen, onClose, onSuccess }: RSVPFlowProps) {
     dietaryRestrictions: '',
     guestCount: 1,
     agreedToCost: false,
-    phoneNumber: ''
+    phoneNumber: '',
+    createAccount: false,
+    password: ''
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -116,7 +121,12 @@ export function RSVPFlow({ event, isOpen, onClose, onSuccess }: RSVPFlowProps) {
             guestName: formData.attendeeName,
             guestEmail: formData.attendeeEmail,
             phoneNumber: formData.phoneNumber
-          })
+          }),
+          // Include account creation fields for non-authenticated users
+          ...(!isAuthenticated && formData.createAccount ? {
+            createAccount: true,
+            password: formData.password
+          } : {})
         })
       })
 
@@ -147,7 +157,9 @@ export function RSVPFlow({ event, isOpen, onClose, onSuccess }: RSVPFlowProps) {
 
   const isStep1Valid = formData.attendeeName.trim().length > 0 && formData.attendeeEmail.trim().length > 0
   const isStep2Valid = formData.guestCount >= 1 && formData.guestCount <= spotsAvailable
-  const isStep3Valid = formData.agreedToCost
+  const isStep3Valid = formData.agreedToCost && 
+    // If creating account, password must be at least 8 characters
+    (!formData.createAccount || (formData.password && formData.password.length >= 8))
 
   return (
     <div className="fixed inset-0 bg-theme-overlay flex items-center justify-center p-4 z-50">
@@ -303,18 +315,6 @@ export function RSVPFlow({ event, isOpen, onClose, onSuccess }: RSVPFlowProps) {
                       </button>
                     </div>
                   )}
-
-                  {!isAuthenticated && (
-                    <div className="mt-6 p-3 bg-theme-secondary rounded-lg text-center">
-                      <p className="text-xs text-theme-muted mb-2">Want to save your info for future reservations?</p>
-                      <button 
-                        onClick={() => window.location.href = '/sign-up'}
-                        className="text-sm text-theme-subtle hover:text-theme-primary font-medium transition-colors"
-                      >
-                        → Create a free account
-                      </button>
-                    </div>
-                  )}
                 </div>
               </div>
             </div>
@@ -387,14 +387,7 @@ export function RSVPFlow({ event, isOpen, onClose, onSuccess }: RSVPFlowProps) {
                     <div className="flex justify-between">
                       <span className="text-theme-muted">Date:</span>
                       <span className="text-theme-primary">
-                        {new Intl.DateTimeFormat('en-US', {
-                          weekday: 'long',
-                          month: 'long',
-                          day: 'numeric',
-                          hour: 'numeric',
-                          minute: '2-digit',
-                          timeZone: 'America/Chicago' // San Antonio timezone
-                        }).format(new Date(event.date))}
+                        {formatEventDate(event.date)}
                       </span>
                     </div>
                     <div className="flex justify-between">
@@ -445,6 +438,52 @@ export function RSVPFlow({ event, isOpen, onClose, onSuccess }: RSVPFlowProps) {
                     <p>• By reserving, you agree to our terms of service</p>
                   </div>
                 </div>
+
+                {/* Progressive Account Creation - Only show for non-authenticated users */}
+                {!isAuthenticated && (
+                  <div className="space-y-4">
+                    <div className="border-t border-theme-primary pt-4">
+                      <h4 className="font-medium text-theme-primary mb-3">Save Your Information (Optional)</h4>
+                      
+                      <label className="flex items-start gap-3">
+                        <input
+                          type="checkbox"
+                          checked={formData.createAccount || false}
+                          onChange={(e) => handleInputChange('createAccount', e.target.checked)}
+                          className="mt-1 w-4 h-4 checkbox-theme rounded"
+                        />
+                        <div className="flex-1">
+                          <span className="text-sm text-theme-primary font-medium">
+                            Create an account to save my info for future reservations
+                          </span>
+                          <p className="text-xs text-theme-muted mt-1">
+                            Save your preferences, view reservation history, and book faster next time
+                          </p>
+                        </div>
+                      </label>
+
+                      {formData.createAccount && (
+                        <div className="mt-4 pl-7">
+                          <label htmlFor="account-password" className="block text-sm font-medium text-theme-primary mb-2">
+                            Choose a password
+                          </label>
+                          <input
+                            id="account-password"
+                            type="password"
+                            value={formData.password || ''}
+                            onChange={(e) => handleInputChange('password', e.target.value)}
+                            placeholder="Enter password (minimum 8 characters)"
+                            className="w-full px-3 py-2 input-theme rounded-lg"
+                            minLength={8}
+                          />
+                          <p className="text-xs text-theme-muted mt-1">
+                            Your account will be created automatically when you confirm your reservation
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )}

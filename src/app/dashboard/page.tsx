@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { EventShareButton } from '@/components/EventShareButton'
 import { Navigation } from '@/components/Navigation'
 import { useToast } from '@/components/Toast'
+import { formatEventDate, formatShortDate } from '@/lib/utils'
 
 interface Event {
   id: string
@@ -49,27 +50,7 @@ export default function DashboardPage() {
   const [showCancelReservationModal, setShowCancelReservationModal] = useState<string | null>(null)
   const [cancelReservationLoading, setCancelReservationLoading] = useState(false)
 
-  const formatDate = (date: string | null | undefined) => {
-    if (!date) return 'Date TBD'
-    
-    try {
-      const dateObj = new Date(date)
-      if (isNaN(dateObj.getTime())) {
-        return 'Date TBD'
-      }
-      
-      return new Intl.DateTimeFormat('en-US', {
-        weekday: 'long',
-        month: 'long',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit',
-        timeZone: 'America/Chicago' // San Antonio timezone
-      }).format(dateObj)
-    } catch {
-      return 'Date TBD'
-    }
-  }
+  // Use centralized date formatting utilities
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -403,9 +384,9 @@ export default function DashboardPage() {
                               
                               <div className="space-y-1 text-xs sm:text-sm text-theme-muted">
                                 {event.useAvailabilityPoll && event.pollDeadline ? (
-                                  <p>🗳️ Poll deadline: {formatDate(event.pollDeadline)}</p>
+                                  <p>🗳️ Poll deadline: {formatShortDate(event.pollDeadline || '')}</p>
                                 ) : (
-                                  <p>📅 {formatDate(event.date)}</p>
+                                  <p>📅 {formatEventDate(event.date)}</p>
                                 )}
                                 <p>👥 {event.currentReservations || 0}/{event.maxCapacity || 0} guests</p>
                                 <p>📍 {formatLocation(event.location)}</p>
@@ -570,7 +551,7 @@ export default function DashboardPage() {
                           <div className="space-y-2 text-sm text-theme-muted">
                             <div className="flex items-center">
                               <span className="w-4 h-4 mr-2">📅</span>
-                              {formatDate(event.date)}
+                              {formatEventDate(event.date)}
                             </div>
                             <div className="flex items-center">
                               <span className="w-4 h-4 mr-2">📍</span>

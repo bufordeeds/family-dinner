@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { ProposedDateTime } from '@/types'
+import { APP_TIMEZONE } from '@/lib/utils'
 
 interface ProposedDateSelectorProps {
   proposedDates: ProposedDateTime[]
@@ -45,7 +46,8 @@ export function ProposedDateSelector({ proposedDates, onChange }: ProposedDateSe
         month: 'long',
         day: 'numeric',
         hour: 'numeric',
-        minute: '2-digit'
+        minute: '2-digit',
+        timeZone: APP_TIMEZONE
       }).format(dateTime)
     } catch {
       return `${date} at ${time}`

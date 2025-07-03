@@ -13,8 +13,9 @@ export async function POST(request: NextRequest) {
     // Get authenticated user from Clerk (optional for guest reservations)
     const { userId: clerkUserId } = getAuth(request)
     
-    // Check if this is a guest reservation
+    // Check if this is a guest reservation or account creation
     const isGuestReservation = !clerkUserId && body.guestName && body.guestEmail
+    const shouldCreateAccount = !clerkUserId && body.createAccount && body.password
     
     if (!clerkUserId && !isGuestReservation) {
       return NextResponse.json(
@@ -35,6 +36,11 @@ export async function POST(request: NextRequest) {
       requiredFields = [...requiredFields, 'guestName', 'guestEmail']
     }
     
+    // Add account creation validation
+    if (shouldCreateAccount) {
+      requiredFields = [...requiredFields, 'guestName', 'guestEmail', 'password']
+    }
+    
     const missingFields = requiredFields.filter(field => !body[field])
     
     if (missingFields.length > 0) {
@@ -48,8 +54,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Email validation for guests
-    if (isGuestReservation) {
+    // Email validation for guests and account creation
+    if (isGuestReservation || shouldCreateAccount) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
       if (!emailRegex.test(body.guestEmail)) {
         return NextResponse.json(
@@ -57,6 +63,20 @@ export async function POST(request: NextRequest) {
             success: false,
             error: 'Validation failed',
             message: 'Please provide a valid email address'
+          },
+          { status: 400 }
+        )
+      }
+    }
+
+    // Password validation for account creation
+    if (shouldCreateAccount) {
+      if (!body.password || body.password.length < 8) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'Validation failed',
+            message: 'Password must be at least 8 characters long'
           },
           { status: 400 }
         )
@@ -75,20 +95,64 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Ensure authenticated user exists in database
-    if (clerkUserId) {
-      await UserService.ensureUserExists(clerkUserId)
+    // Handle account creation if requested
+    let finalUserId = clerkUserId
+    if (shouldCreateAccount) {
+      try {
+        const { clerkClient } = await import('@clerk/nextjs/server')
+        const client = await clerkClient()
+        
+        // Create user account with Clerk
+        const newUser = await client.users.createUser({
+          emailAddress: [body.guestEmail],
+          password: body.password,
+          firstName: body.guestName.split(' ')[0],
+          lastName: body.guestName.split(' ').slice(1).join(' ') || undefined,
+        })
+        
+        finalUserId = newUser.id
+        
+        // Ensure user exists in our database
+        await UserService.ensureUserExists(finalUserId)
+      } catch (error) {
+        console.error('Account creation error:', error)
+        // Check if user already exists
+        if (error instanceof Error && error.message.includes('already exists')) {
+          return NextResponse.json(
+            {
+              success: false,
+              error: 'Account creation failed',
+              message: 'An account with this email already exists. Please sign in instead.'
+            },
+            { status: 400 }
+          )
+        }
+        
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'Account creation failed',
+            message: 'Failed to create account. Please try again.'
+          },
+          { status: 500 }
+        )
+      }
     }
 
-    // Create reservation for authenticated user or guest
+    // Ensure authenticated user exists in database
+    if (finalUserId) {
+      await UserService.ensureUserExists(finalUserId)
+    }
+
+    // Create reservation for authenticated user, new account, or guest
     const reservation = await ReservationService.createReservation({
       eventId: body.eventId,
-      userId: clerkUserId || null, // null for guest reservations
+      userId: finalUserId || null, // null only for pure guest reservations
       guestCount: Number(body.guestCount),
       dietaryRestrictions: body.dietaryRestrictions || undefined,
       specialRequests: body.specialRequests || undefined,
-      // Guest-specific fields
-      ...(isGuestReservation ? {
+      // Guest-specific fields (only for pure guest reservations, not account creation)
+      ...(isGuestReservation && !shouldCreateAccount ? {
         guestName: body.guestName,
         guestEmail: body.guestEmail,
         phoneNumber: body.phoneNumber || undefined
@@ -109,15 +173,15 @@ export async function POST(request: NextRequest) {
           let userEmail: string | undefined
           let userName: string = ''
           
-          if (isGuestReservation) {
-            // Use guest information
+          if (isGuestReservation && !shouldCreateAccount) {
+            // Use guest information for pure guest reservations
             userEmail = body.guestEmail
             userName = body.guestName
-          } else if (clerkUserId) {
-            // Get user info from Clerk
+          } else if (finalUserId) {
+            // Get user info from Clerk (for existing users or newly created accounts)
             const { clerkClient } = await import('@clerk/nextjs/server')
             const client = await clerkClient()
-            const clerkUser = await client.users.getUser(clerkUserId)
+            const clerkUser = await client.users.getUser(finalUserId)
             
             userEmail = clerkUser.emailAddresses.find(email => email.id === clerkUser.primaryEmailAddressId)?.emailAddress
             userName = clerkUser.fullName || clerkUser.firstName || 'User'
@@ -141,10 +205,20 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Prepare response message
+    let responseMessage = reservation.message || 'Reservation created successfully'
+    if (shouldCreateAccount) {
+      responseMessage = 'Account created and reservation confirmed!'
+    }
+
     return NextResponse.json({
       success: true,
-      data: reservation,
-      message: reservation.message || 'Reservation created successfully'
+      data: {
+        ...reservation,
+        accountCreated: shouldCreateAccount,
+        userId: finalUserId
+      },
+      message: responseMessage
     }, { status: 201 })
 
   } catch (error) {

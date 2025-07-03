@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useRef } from 'react'
 import { ProposedDateTime } from '@/types'
+import { formatTimeOnly, APP_TIMEZONE } from '@/lib/utils'
 
 interface CalendarTimeSelectorProps {
   proposedDates: ProposedDateTime[]
@@ -111,16 +112,16 @@ export function CalendarTimeSelector({ proposedDates, onChange }: CalendarTimeSe
   }
 
   const formatTime = (hour: number, minute: number) => {
-    const ampm = hour >= 12 ? 'PM' : 'AM'
-    const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour
-    return `${displayHour}:${minute.toString().padStart(2, '0')} ${ampm}`
+    const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
+    return formatTimeOnly(timeString)
   }
 
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat('en-US', {
       weekday: 'short',
       month: 'short',
-      day: 'numeric'
+      day: 'numeric',
+      timeZone: APP_TIMEZONE
     }).format(date)
   }
 
@@ -252,7 +253,8 @@ export function CalendarTimeSelector({ proposedDates, onChange }: CalendarTimeSe
                   month: 'short',
                   day: 'numeric',
                   hour: 'numeric',
-                  minute: '2-digit'
+                  minute: '2-digit',
+                  timeZone: APP_TIMEZONE
                 }).format(date)
                 
                 return (

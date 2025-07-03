@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { AvailabilityPollData, AvailabilityResponse } from '@/types'
 import { groupDatesByDay } from '@/utils/dateGrouping'
+import { formatShortDate } from '@/lib/utils'
 
 interface AvailabilityPollResponseProps {
   pollData: AvailabilityPollData
@@ -143,12 +144,7 @@ export function AvailabilityPollResponse({
         ) : pollData.pollDeadline && (
           <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 mb-6">
             <p className="text-yellow-800 dark:text-yellow-200 text-center">
-              ⏰ Please respond by {new Intl.DateTimeFormat('en-US', {
-                month: 'long',
-                day: 'numeric',
-                hour: 'numeric',
-                minute: '2-digit'
-              }).format(new Date(pollData.pollDeadline))}
+              ⏰ Please respond by {formatShortDate(pollData.pollDeadline)}
             </p>
           </div>
         )}
