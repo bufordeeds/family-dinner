@@ -40,7 +40,8 @@ export function formatEventDate(date: Date | string): string {
       month: 'long',
       day: 'numeric',
       hour: 'numeric',
-      minute: '2-digit'
+      minute: '2-digit',
+      timeZone: APP_TIMEZONE
     }).format(dateObj)
   } catch (error) {
     console.error('Error formatting date:', error)
