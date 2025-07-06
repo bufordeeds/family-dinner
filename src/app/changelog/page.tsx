@@ -27,6 +27,25 @@ export default function ChangelogPage() {
 						</h2>
 
 						<div className='max-h-96 overflow-y-auto space-y-6 pr-2'>
+							<div className='border-l-4 border-green-500 pl-4'>
+								<div className='flex items-center gap-2 mb-2'>
+									<span className='text-sm font-medium text-theme-subtle'>
+										July 6, 2025
+									</span>
+									<span className='px-2 py-1 text-xs badge-info rounded-full'>
+										Feature
+									</span>
+								</div>
+								<h3 className='text-lg font-medium text-theme-primary mb-1'>
+									Automatic Past Event Cleanup
+								</h3>
+								<p className='text-theme-muted'>
+									Added a cron job that automatically cleans up events older than 
+									30 days to keep the database fresh. Thank you to Adam for the 
+									excellent suggestion!
+								</p>
+							</div>
+
 							<div className='border-l-4 border-orange-500 pl-4'>
 								<div className='flex items-center gap-2 mb-2'>
 									<span className='text-sm font-medium text-theme-subtle'>
@@ -149,6 +168,40 @@ export default function ChangelogPage() {
 											</span>
 											<span className='text-xs text-theme-subtle'>
 												<span className='font-medium text-theme-subtle'>Implemented</span> - What an amazing suggestion, Case! The warm palette transforms the entire experience!
+											</span>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div className='bg-theme-card rounded-lg p-4 border border-theme-primary'>
+								<div className='flex items-start gap-3'>
+									<div className='w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white font-semibold text-sm'>
+										A
+									</div>
+									<div className='flex-1'>
+										<div className='flex items-center gap-2 mb-1'>
+											<span className='font-medium text-theme-primary'>
+												Adam
+											</span>
+											<span className='text-sm text-theme-subtle'>
+												• Suggested
+											</span>
+										</div>
+										<h4 className='font-medium text-theme-primary mb-1'>
+											Automatic Past Event Cleanup
+										</h4>
+										<p className='text-sm text-theme-muted mb-2'>
+											&quot;ay yo, you should create a cron job that&apos;ll clear out events that are in the past&quot;
+										</p>
+										<div className='flex items-start gap-2'>
+											<span className='px-2 py-1 text-xs badge-success rounded-full flex-shrink-0 flex items-center'>
+												<svg className='w-3 h-3' fill='currentColor' viewBox='0 0 20 20'>
+													<path fillRule='evenodd' d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z' clipRule='evenodd' />
+												</svg>
+											</span>
+											<span className='text-xs text-theme-subtle'>
+												<span className='font-medium text-theme-subtle'>Implemented</span> - Great idea, Adam! The app now automatically cleans up events older than 30 days.
 											</span>
 										</div>
 									</div>

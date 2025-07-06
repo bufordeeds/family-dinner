@@ -228,14 +228,11 @@ export default function CreateEventPage() {
 				}
 			}
 
-			// Import the conversion function
-			const { convertCentralTimeToUTC } = await import('@/lib/utils')
-			
 			// Prepare API request data
 			const eventData = {
 				title: formData.title,
 				description: formData.description,
-				date: convertCentralTimeToUTC(formData.date, formData.time),
+				date: `${formData.date}T${formData.time}`,
 				duration: formData.duration,
 				maxCapacity: formData.maxCapacity,
 				estimatedCostPerPerson: formData.estimatedCostPerPerson,
