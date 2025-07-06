@@ -9,8 +9,13 @@ import { EventStatus } from '@prisma/client'
 export class EventService {
   // Get public events for browse page
   static async getPublicEvents(filters: EventFilters = {}) {
+    // Set default dateFrom to today if not provided
+    const today = new Date()
+    today.setHours(0, 0, 0, 0) // Start of today
+    
     const events = await EventRepository.findMany({
       ...filters,
+      dateFrom: filters.dateFrom || today, // Only show today's and future events
       status: ['OPEN', 'POLL_ACTIVE'] // Show both open events and active polls to public
     })
 
