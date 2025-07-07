@@ -1,36 +1,157 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Family Dinner
+
+A community platform for hosting and joining shared meals, where people can connect over home-cooked food and split cooking costs.
+
+## Overview
+
+Family Dinner connects home cooks with people looking for authentic, home-cooked meals. Hosts can create dinner events, manage RSVPs, and split costs, while guests can browse available dinners, RSVP, and pay their share.
+
+### Key Features
+
+- **Event Management**: Create and manage dinner events with customizable menus, pricing, and capacity
+- **Availability Polling**: Schedule dinners using polls to find the best date for all participants
+- **Cost Splitting**: Automatic cost calculation and payment tracking through Venmo integration
+- **RSVP System**: Guest management with dietary restrictions and special requests
+- **Receipt Upload**: Track actual costs with receipt uploads and OCR processing
+- **Reviews & Ratings**: Build trust through community reviews
+- **Dark/Light Theme**: Customizable UI with theme support
+
+## Tech Stack
+
+- **Framework**: Next.js 15 with App Router and React 19
+- **Database**: PostgreSQL with Prisma ORM
+- **Authentication**: Clerk
+- **Styling**: Tailwind CSS v4
+- **Email**: Resend
+- **Testing**: Jest & Testing Library
+- **Deployment**: Optimized for Vercel
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Node.js 18+
+- PostgreSQL database
+- Clerk account for authentication
+- Resend account for emails (optional)
+
+### Environment Variables
+
+Create a `.env.local` file with:
+
+```env
+DATABASE_URL="your-postgresql-url"
+POSTGRES_URL_NON_POOLING="your-direct-postgresql-url"
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="your-clerk-publishable-key"
+CLERK_SECRET_KEY="your-clerk-secret-key"
+RESEND_API_KEY="your-resend-api-key"
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Installation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+# Install dependencies
+npm install
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# Generate Prisma client
+npx prisma generate
 
-## Learn More
+# Run database migrations
+npx prisma migrate dev
 
-To learn more about Next.js, take a look at the following resources:
+# Seed the database (optional)
+npm run db:seed
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Start development server
+npm run dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Open [http://localhost:3000](http://localhost:3000) to view the application.
 
-## Deploy on Vercel
+## Project Structure
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+src/
+├── app/                  # Next.js app router pages
+│   ├── api/             # API routes
+│   ├── auth/            # Authentication pages
+│   ├── browse/          # Event browsing
+│   ├── chef/            # Chef dashboard
+│   ├── create-event/    # Event creation
+│   ├── dashboard/       # User dashboard
+│   ├── events/          # Event details & management
+│   └── poll/            # Availability polling
+├── components/          # React components
+├── contexts/           # React contexts (auth, theme)
+├── lib/                # Utilities and configurations
+├── services/           # Business logic and API calls
+└── types/              # TypeScript type definitions
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+prisma/
+├── schema.prisma       # Database schema
+└── seed.ts            # Database seeding script
+```
+
+## Available Scripts
+
+- `npm run dev` - Start development server with Turbopack
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
+- `npm run db:seed` - Seed database with sample data
+- `npm run db:cleanup` - Clean up past events
+
+## Testing
+
+```bash
+# Run all tests
+npm test
+
+# Run tests in watch mode
+npm test -- --watch
+
+# Run tests with coverage
+npm test -- --coverage
+```
+
+## Features in Detail
+
+### For Hosts
+- Create dinner events with detailed menus and ingredient tracking
+- Set participant limits and pricing
+- Manage RSVPs and waitlists
+- Track costs with receipt uploads
+- Receive payments through Venmo
+
+### For Guests
+- Browse available dinners by location
+- RSVP with dietary restrictions
+- Pay your share easily
+- Leave reviews after attending
+- Build connections in your community
+
+## Database Schema
+
+The application uses PostgreSQL with the following main entities:
+- **Users**: Chef and attendee profiles
+- **Events**: Dinner events with details and pricing
+- **Reservations**: Guest RSVPs and payment tracking
+- **Reviews**: Community feedback system
+- **Receipts**: Cost tracking with OCR support
+
+## Contributing
+
+Contributions are welcome! Please:
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to your branch
+5. Open a pull request
+
+## License
+
+This project is private and proprietary.
+
+## Contact
+
+For questions or feedback, reach out to buford@familydinner.me
