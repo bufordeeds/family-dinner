@@ -117,6 +117,7 @@ npm test -- --coverage
 ## Features in Detail
 
 ### For Hosts
+
 - Create dinner events with detailed menus and ingredient tracking
 - Set participant limits and pricing
 - Manage RSVPs and waitlists
@@ -124,6 +125,7 @@ npm test -- --coverage
 - Receive payments through Venmo
 
 ### For Guests
+
 - Browse available dinners by location
 - RSVP with dietary restrictions
 - Pay your share easily
@@ -133,6 +135,7 @@ npm test -- --coverage
 ## Database Schema
 
 The application uses PostgreSQL with the following main entities:
+
 - **Users**: Chef and attendee profiles
 - **Events**: Dinner events with details and pricing
 - **Reservations**: Guest RSVPs and payment tracking
@@ -142,6 +145,7 @@ The application uses PostgreSQL with the following main entities:
 ## Contributing
 
 Contributions are welcome! Please:
+
 1. Fork the repository
 2. Create a feature branch
 3. Commit your changes
@@ -150,7 +154,21 @@ Contributions are welcome! Please:
 
 ## License
 
-This project is private and proprietary.
+Copyright (c) 2025 Buford Eeds
+
+This project is open source for viewing and learning purposes only. You may:
+
+- View and study the code
+- Fork for personal learning
+- Submit pull requests for improvements
+
+You may NOT:
+
+- Use this code for commercial purposes
+- Rebrand or redistribute as your own project
+- Deploy your own instance without permission
+
+For licensing inquiries, contact buford@familydinner.me
 
 ## Contact
 
